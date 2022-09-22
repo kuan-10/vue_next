@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+     const vnode={
+        tag:"div",
+        props:{
+            onClick:()=>alert('ok!')
+        },
+        children:'click me'
+    }
+   function render(vnode,container){
+    const el=document.createElement(vnode.tag)//创建元素
+    for( const key in vnode.props){
+          if(/^on/.test(key)){
+            el.addEventListener(
+                key.substring(2).toLowerCase(),
+                vnode.props[key]
+            )
+          }
+    }
+    if(typeof(vnode.children)==='string'){
+        el.appendChild(document.createTextNode(vnode.children))
+
+    }
+    else if(Array.isArray(vnode.children)){
+        vnode.children.forEach(item=>{
+            render(el,item)
+        })
+    }
+    container.appendChild(el)
+}
+render(vnode,document.body)
+const data={
+    text:"12"
+}
+const bucket=new Set()
+const obj=new Proxy(data,{
+    get(target,key){
+   console.log(target,key)
+   bucket.add(effect)
+   return target[key]
+    },
+    set(target,key,newVal){
+        target[key]=newVal
+        bucket.forEach(item=>item())
+        return true
+    }
+})
+function effect(){
+    document.body.innerText=obj.text
+}
+effect()
+setTimeout(()=>{
+    obj.text="1233"
+},1000)
+</script>
+</html>
